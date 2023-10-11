@@ -49,7 +49,7 @@ class _GraphDisplayState extends State<GraphDisplay> {
   Widget buildDraggingEdge(BuildContext context) {
     RenderBox containerRenderBox = context.findRenderObject() as RenderBox;
 
-    return DraggingEdgeDisplay(
+    return BezierEdgeDisplay(
       startPosition: containerRenderBox.globalToLocal(currentDraggingRenderBox!
           .localToGlobal(Offset(currentDraggingRenderBox!.size.width,
               currentDraggingRenderBox!.size.height / 2))),
@@ -83,15 +83,16 @@ class _GraphDisplayState extends State<GraphDisplay> {
   void createEdgeDisplays(UiGraph graph) {
     final nodes = widget.graph.nodes.values;
 
-    for (final node in nodes) {
-      for (final inPort in node.inPorts.values) {
+    for (final toNode in nodes) {
+      for (final inPort in toNode.inPorts.values) {
         if (inPort.connected) {
           OutPort<dynamic, UiNodeMixin> outPort =
               inPort.edge!.from as OutPort<dynamic, UiNodeMixin>;
+          final fromNode = outPort.node;
           final fromIndicatorFuture =
-              stateManager.getPortIndicatorKey(node, outPort);
+              stateManager.getPortIndicatorKey(fromNode, outPort);
           final toIndicatorFuture =
-              stateManager.getPortIndicatorKey(node, inPort);
+              stateManager.getPortIndicatorKey(toNode, inPort);
 
           Future.wait([fromIndicatorFuture, toIndicatorFuture]).then((value) {
             final fromIndicatorKey = value[0];
@@ -99,6 +100,9 @@ class _GraphDisplayState extends State<GraphDisplay> {
 
             setState(() {
               edgeWidgets[inPort.edge!] = EdgeDisplay(
+                  stateManager: stateManager,
+                  edge: inPort.edge!,
+                  containerKey: containerKey,
                   fromPortKey: fromIndicatorKey,
                   toPortKey: toIndicatorKey,
                   paint: edgePaint);

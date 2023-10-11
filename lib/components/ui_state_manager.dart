@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:computational_graph/computational_graph.dart';
+import 'package:diffcalc_graph/components/edge_display.dart';
 import 'package:diffcalc_graph/data/nodes/ui_node.dart';
 import 'package:flutter/cupertino.dart';
 
 class EdgeState {
-  final RenderBox renderBox;
+  final Edge edge;
+  final EdgeDisplayState displayState;
 
-  EdgeState({required this.renderBox});
+  EdgeState({required this.edge, required this.displayState});
 }
 
 class PortState {
@@ -38,66 +40,84 @@ class PortState {
   }
 
   void redrawEdge() {
-    if (_connectedEdge == null) {
-      return;
+    if (_connectedEdge != null) {
+      _connectedEdge!.displayState.redraw();
     }
-    _connectedEdge!.renderBox.markNeedsPaint();
   }
 }
 
 class NodeState {
-  final Map<String, PortState> portStates = {};
+  final UiNodeMixin node;
+  final Map<String, PortState> _portStates = {};
 
-  NodeState({required UiNodeMixin node}) {
+  NodeState({required this.node}) {
     for (final port in node.inPorts.values) {
-      portStates[port.name] = PortState();
+      _portStates[port.name] = PortState();
     }
     for (final port in node.outPorts.values) {
-      portStates[port.name] = PortState();
+      _portStates[port.name] = PortState();
     }
+  }
+
+  PortState getPortState(Port port) {
+    final portState = _portStates[port.name];
+    if (portState == null) {
+      throw Exception(
+          "Port ${port.name} does not have a ui state created. This could mean the port isn't registered under the current node.");
+    }
+
+    return portState;
   }
 
   void registerPortIndicatorKey(Port port, GlobalObjectKey key) {
-    if (!portStates.containsKey(port.name)) {
-      throw Exception(
-          "Port ${port.name} does not have a ui state created. This could mean the port isn't registered under the current node.");
-    }
-
-    portStates[port.name]!.setIndicatorKey(key);
+    getPortState(port).setIndicatorKey(key);
   }
 
   Future<GlobalObjectKey> getPortIndicatorKey(Port port) async {
-    if (!portStates.containsKey(port.name)) {
-      throw Exception(
-          "Port ${port.name} does not have a ui state created. This could mean the port isn't registered under the current node.");
-    }
+    return getPortState(port).getIndicatorKey();
+  }
 
-    return portStates[port.name]!.getIndicatorKey();
+  void redrawConnectedEdges() {
+    for (final portState in _portStates.values) {
+      portState.redrawEdge();
+    }
   }
 }
 
 class UiStateManager {
-  final Map<String, NodeState> nodeStates = {};
+  final Map<String, NodeState> _nodeStates = {};
 
-  void registerNodeState({required UiNodeMixin node}) {
-    nodeStates[node.id] = NodeState(node: node);
+  NodeState getNodeState(UiNodeMixin node) {
+    final nodeState = _nodeStates[node.id];
+    if (nodeState == null) {
+      throw Exception(
+          "Node ${node.id} does not have a ui state created under this state manager.");
+    }
+
+    return nodeState;
+  }
+
+  void registerEdgeState({required EdgeState edgeState}) {
+    final fromPort = edgeState.edge.from;
+    final toPort = edgeState.edge.to;
+    final fromNode = fromPort.node as UiNodeMixin;
+    final toNode = toPort.node as UiNodeMixin;
+
+    getNodeState(fromNode).getPortState(fromPort).setConnectedEdge(edgeState);
+    getNodeState(toNode).getPortState(toPort).setConnectedEdge(edgeState);
+  }
+
+  void registerNodeState({required NodeState nodeState}) {
+    _nodeStates[nodeState.node.id] = nodeState;
   }
 
   void registerPortIndicatorKey(
       UiNodeMixin node, Port port, GlobalObjectKey key) {
-    if (!nodeStates.containsKey(node.id)) {
-      throw Exception("Node ${node.id} does not have a ui state created.");
-    }
-
-    nodeStates[node.id]!.registerPortIndicatorKey(port, key);
+    getNodeState(node).registerPortIndicatorKey(port, key);
   }
 
   Future<GlobalObjectKey> getPortIndicatorKey(
       UiNodeMixin node, Port port) async {
-    if (!nodeStates.containsKey(node.id)) {
-      throw Exception("Node ${node.id} does not have a ui state created.");
-    }
-
-    return await nodeStates[node.id]!.getPortIndicatorKey(port);
+    return await getNodeState(node).getPortIndicatorKey(port);
   }
 }

@@ -30,8 +30,8 @@ class _NodeDisplayState extends State<NodeDisplay> {
   @override
   void initState() {
     super.initState();
-
-    widget.stateManager.registerNodeState(node: widget.node);
+    widget.stateManager
+        .registerNodeState(nodeState: NodeState(node: widget.node));
   }
 
   Widget buildBody(BuildContext context, ColorScheme colorScheme) {
@@ -93,6 +93,7 @@ class _NodeDisplayState extends State<NodeDisplay> {
           renderBox.markNeedsPaint();
         }
 
+        widget.stateManager.getNodeState(widget.node).redrawConnectedEdges();
         setState(() {
           widget.node.x += e.delta.dx;
           widget.node.y += e.delta.dy;
