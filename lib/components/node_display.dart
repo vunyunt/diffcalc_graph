@@ -9,16 +9,20 @@ final class NodeDisplay extends StatefulWidget {
   final UiStateManager stateManager;
   final UiGraph graph;
   final UiNodeMixin node;
-  final Function(GlobalObjectKey) onInPortTapDown;
-  final Function(GlobalObjectKey) onOutPortTapDown;
+  final Function(GlobalObjectKey, Port) onPortDragStarted;
+  final Function(DragUpdateDetails) onPortDragUpdate;
+  final Function(GlobalObjectKey, Port) onPortDragEnd;
+  final Function(Edge edge) onPortDragAccepted;
 
   const NodeDisplay(
       {super.key,
       required this.stateManager,
       required this.graph,
       required this.node,
-      required this.onInPortTapDown,
-      required this.onOutPortTapDown});
+      required this.onPortDragStarted,
+      required this.onPortDragUpdate,
+      required this.onPortDragEnd,
+      required this.onPortDragAccepted});
 
   @override
   State<StatefulWidget> createState() {
@@ -53,10 +57,14 @@ class _NodeDisplayState extends State<NodeDisplay> {
                   .map((e) => InPortDisplay(
                         key: Key(e.name),
                         inPort: e,
-                        onTapDown: (indicatorKey, inPort) {
-                          widget.onInPortTapDown(indicatorKey);
+                        onDragStarted: (indicatorKey, inPort) {
+                          widget.onPortDragStarted(indicatorKey, inPort);
                         },
-                        onTapUp: (indicatorKey, inPort) {},
+                        onDragUpdate: widget.onPortDragUpdate,
+                        onDragEnd: (indicatorKey, inPort) {
+                          widget.onPortDragEnd(indicatorKey, inPort);
+                        },
+                        onDragAccepted: widget.onPortDragAccepted,
                         onKeyReady: (indicatorKey, inPort) {
                           widget.stateManager.registerPortIndicatorKey(
                               widget.node, inPort, indicatorKey);
@@ -71,10 +79,14 @@ class _NodeDisplayState extends State<NodeDisplay> {
                   .map((e) => OutPortDisplay(
                         key: Key(e.name),
                         outPort: e,
-                        onTapDown: (indicatorKey, outPort) {
-                          widget.onOutPortTapDown(indicatorKey);
+                        onDragStarted: (indicatorKey, outPort) {
+                          widget.onPortDragStarted(indicatorKey, outPort);
                         },
-                        onTapUp: (indicatorKey, outPort) {},
+                        onDragUpdate: widget.onPortDragUpdate,
+                        onDragEnd: (indicatorKey, outPort) {
+                          widget.onPortDragEnd(indicatorKey, outPort);
+                        },
+                        onDragAccepted: widget.onPortDragAccepted,
                         onKeyReady: (indicatorKey, outPort) {
                           widget.stateManager.registerPortIndicatorKey(
                               widget.node, outPort, indicatorKey);
@@ -93,10 +105,16 @@ class _NodeDisplayState extends State<NodeDisplay> {
           renderBox.markNeedsPaint();
         }
 
-        widget.stateManager.getNodeState(widget.node).redrawConnectedEdges();
         setState(() {
           widget.node.x += e.delta.dx;
           widget.node.y += e.delta.dy;
+        });
+
+        widget.stateManager.getNodeState(widget.node).redrawConnectedEdges();
+      },
+      onPanEnd: (e) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          widget.stateManager.getNodeState(widget.node).redrawConnectedEdges();
         });
       },
       child: Container(

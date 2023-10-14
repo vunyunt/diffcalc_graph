@@ -61,7 +61,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   final UiGraph _graph = UiGraph();
   late final TestNode testNode1;
   late final TestNode testNode2;
@@ -70,17 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     testNode1 = TestNode(_graph);
     testNode2 = TestNode(_graph);
     testNode1.outPorts.values.first.connectTo(testNode2.inPorts.values.first);
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    // testNode1.outPorts['outPort3']!.connectTo(testNode2.inPorts['inPort2']!);
   }
 
   @override
@@ -104,8 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: GraphDisplay(
-            graph: _graph),
+        child: GraphDisplay(graph: _graph),
       ),
     );
   }

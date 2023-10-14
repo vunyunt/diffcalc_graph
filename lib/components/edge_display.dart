@@ -72,13 +72,16 @@ final class EdgeDisplay extends StatefulWidget {
       required this.paint});
 
   @override
-  State<EdgeDisplay> createState() => EdgeDisplayState();
+  State<EdgeDisplay> createState() {
+    return EdgeDisplayState();
+  }
 }
 
 class EdgeDisplayState extends State<EdgeDisplay> {
   Offset fromPosition = Offset.zero;
   Offset toPosition = Offset.zero;
   late final RenderBox containerRenderBox;
+  late final EdgeState edgeState;
 
   void updatePosition() {
     final fromBox =
@@ -105,8 +108,14 @@ class EdgeDisplayState extends State<EdgeDisplay> {
     containerRenderBox =
         widget.containerKey.currentContext!.findRenderObject() as RenderBox;
     updatePosition();
-    widget.stateManager.registerEdgeState(
-        edgeState: EdgeState(edge: widget.edge, displayState: this));
+    edgeState = EdgeState(edge: widget.edge, displayState: this);
+    widget.stateManager.registerEdgeState(edgeState: edgeState);
+  }
+
+  @override
+  void dispose() {
+    widget.stateManager.unregisterEdgeState(edgeState: edgeState);
+    super.dispose();
   }
 
   @override

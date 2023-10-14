@@ -22,6 +22,7 @@ class _GraphDisplayState extends State<GraphDisplay> {
   late GlobalObjectKey containerKey;
   Offset cursorPosition = Offset.zero;
   UiStateManager stateManager = UiStateManager();
+  Port? currentDraggingPort;
 
   Map<Edge, Widget> edgeWidgets = {};
 
@@ -39,10 +40,17 @@ class _GraphDisplayState extends State<GraphDisplay> {
 
   @override
   void initState() {
-    containerKey = GlobalObjectKey(widget.graph);
     super.initState();
+
+    containerKey = GlobalObjectKey(widget.graph);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       createEdgeDisplays(widget.graph);
+    });
+
+    widget.graph.onEdgeDisconnected.listen((edge) {
+      setState(() {
+        edgeWidgets.remove(edge);
+      });
     });
   }
 
@@ -64,20 +72,50 @@ class _GraphDisplayState extends State<GraphDisplay> {
         stateManager: stateManager,
         graph: widget.graph,
         node: node,
-        onInPortTapDown: (indicatorKey) {
+        onPortDragStarted: (indicatorKey, port) {
           setState(() {
+            currentDraggingPort = port;
             currentDraggingRenderBox =
                 indicatorKey.currentContext!.findRenderObject() as RenderBox;
           });
         },
-        onOutPortTapDown: (indicatorKey) {
+        onPortDragUpdate: (e) {
+          final containerRenderBox =
+              containerKey.currentContext!.findRenderObject() as RenderBox;
+
           setState(() {
-            currentDraggingRenderBox =
-                indicatorKey.currentContext!.findRenderObject() as RenderBox;
+            cursorPosition = containerRenderBox.globalToLocal(e.globalPosition);
+          });
+        },
+        onPortDragEnd: (indicatorKey, port) {
+          setState(() {
+            currentDraggingPort = null;
+            currentDraggingRenderBox = null;
+          });
+        },
+        onPortDragAccepted: (edge) {
+          setState(() {
+            edgeWidgets[edge] = createEdgeDisplay(graph, edge);
           });
         },
       );
     });
+  }
+
+  Widget createEdgeDisplay(UiGraph graph, Edge edge) {
+    final fromIndicator = stateManager.getPortIndicatorKey(
+        edge.from.node as UiNodeMixin, edge.from);
+    final toIndicator =
+        stateManager.getPortIndicatorKey(edge.to.node as UiNodeMixin, edge.to);
+
+    return EdgeDisplay(
+        key: ObjectKey(edge),
+        stateManager: stateManager,
+        edge: edge,
+        containerKey: containerKey,
+        fromPortKey: fromIndicator,
+        toPortKey: toIndicator,
+        paint: edgePaint);
   }
 
   void createEdgeDisplays(UiGraph graph) {
@@ -86,27 +124,8 @@ class _GraphDisplayState extends State<GraphDisplay> {
     for (final toNode in nodes) {
       for (final inPort in toNode.inPorts.values) {
         if (inPort.connected) {
-          OutPort<dynamic, UiNodeMixin> outPort =
-              inPort.edge!.from as OutPort<dynamic, UiNodeMixin>;
-          final fromNode = outPort.node;
-          final fromIndicatorFuture =
-              stateManager.getPortIndicatorKey(fromNode, outPort);
-          final toIndicatorFuture =
-              stateManager.getPortIndicatorKey(toNode, inPort);
-
-          Future.wait([fromIndicatorFuture, toIndicatorFuture]).then((value) {
-            final fromIndicatorKey = value[0];
-            final toIndicatorKey = value[1];
-
-            setState(() {
-              edgeWidgets[inPort.edge!] = EdgeDisplay(
-                  stateManager: stateManager,
-                  edge: inPort.edge!,
-                  containerKey: containerKey,
-                  fromPortKey: fromIndicatorKey,
-                  toPortKey: toIndicatorKey,
-                  paint: edgePaint);
-            });
+          setState(() {
+            edgeWidgets[inPort.edge!] = createEdgeDisplay(graph, inPort.edge!);
           });
         }
       }
@@ -123,16 +142,7 @@ class _GraphDisplayState extends State<GraphDisplay> {
       widgets.add(buildDraggingEdge(context));
     }
 
-    return GestureDetector(
-        onPanUpdate: (e) {
-          setState(() {
-            cursorPosition = e.localPosition;
-          });
-        },
-        onPanEnd: (e) => setState(() {
-              currentDraggingRenderBox = null;
-            }),
-        child: Stack(
-            key: containerKey, children: [...widgets, ...edgeWidgets.values]));
+    return Stack(
+        key: containerKey, children: [...widgets, ...edgeWidgets.values]);
   }
 }

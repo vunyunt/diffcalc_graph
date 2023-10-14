@@ -15,7 +15,7 @@ class EdgeState {
 class PortState {
   GlobalObjectKey? _indicatorKey;
   final Set<Completer<GlobalObjectKey>> _pendingKeyRequests = {};
-  EdgeState? _connectedEdge;
+  final Set<EdgeState> _connectedEdges = {};
 
   void setIndicatorKey(GlobalObjectKey indicatorKey) {
     _indicatorKey = indicatorKey;
@@ -25,23 +25,26 @@ class PortState {
     }
   }
 
-  Future<GlobalObjectKey> getIndicatorKey() async {
-    if (_indicatorKey != null) {
-      return _indicatorKey!;
-    }
+  GlobalObjectKey getIndicatorKey() {
+    final indicatorKey = _indicatorKey;
 
-    Completer<GlobalObjectKey> completer = Completer();
-    _pendingKeyRequests.add(completer);
-    return completer.future;
+    if (indicatorKey == null) {
+      throw Exception("Indicator key is not yet created");
+    }
+    return indicatorKey;
   }
 
-  void setConnectedEdge(EdgeState? connectedEdge) {
-    _connectedEdge = connectedEdge;
+  void addConnectedEdge(EdgeState connectedEdge) {
+    _connectedEdges.add(connectedEdge);
+  }
+
+  void removeConnectedEdge(EdgeState connectedEdge) {
+    print(_connectedEdges.remove(connectedEdge));
   }
 
   void redrawEdge() {
-    if (_connectedEdge != null) {
-      _connectedEdge!.displayState.redraw();
+    for (final connectedEdge in _connectedEdges) {
+      connectedEdge.displayState.redraw();
     }
   }
 }
@@ -73,7 +76,7 @@ class NodeState {
     getPortState(port).setIndicatorKey(key);
   }
 
-  Future<GlobalObjectKey> getPortIndicatorKey(Port port) async {
+  GlobalObjectKey getPortIndicatorKey(Port port) {
     return getPortState(port).getIndicatorKey();
   }
 
@@ -103,8 +106,20 @@ class UiStateManager {
     final fromNode = fromPort.node as UiNodeMixin;
     final toNode = toPort.node as UiNodeMixin;
 
-    getNodeState(fromNode).getPortState(fromPort).setConnectedEdge(edgeState);
-    getNodeState(toNode).getPortState(toPort).setConnectedEdge(edgeState);
+    getNodeState(fromNode).getPortState(fromPort).addConnectedEdge(edgeState);
+    getNodeState(toNode).getPortState(toPort).addConnectedEdge(edgeState);
+  }
+
+  void unregisterEdgeState({required EdgeState edgeState}) {
+    final fromPort = edgeState.edge.from;
+    final toPort = edgeState.edge.to;
+    final fromNode = fromPort.node as UiNodeMixin;
+    final toNode = toPort.node as UiNodeMixin;
+
+    getNodeState(fromNode)
+        .getPortState(fromPort)
+        .removeConnectedEdge(edgeState);
+    getNodeState(toNode).getPortState(toPort).removeConnectedEdge(edgeState);
   }
 
   void registerNodeState({required NodeState nodeState}) {
@@ -116,8 +131,7 @@ class UiStateManager {
     getNodeState(node).registerPortIndicatorKey(port, key);
   }
 
-  Future<GlobalObjectKey> getPortIndicatorKey(
-      UiNodeMixin node, Port port) async {
-    return await getNodeState(node).getPortIndicatorKey(port);
+  GlobalObjectKey getPortIndicatorKey(UiNodeMixin node, Port port) {
+    return getNodeState(node).getPortIndicatorKey(port);
   }
 }
