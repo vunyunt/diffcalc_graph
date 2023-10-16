@@ -64,7 +64,6 @@ class _NodeDisplayState extends State<NodeDisplay> {
                         onDragEnd: (indicatorKey, inPort) {
                           widget.onPortDragEnd(indicatorKey, inPort);
                         },
-                        onDragAccepted: widget.onPortDragAccepted,
                         onKeyReady: (indicatorKey, inPort) {
                           widget.stateManager.registerPortIndicatorKey(
                               widget.node, inPort, indicatorKey);
@@ -86,7 +85,6 @@ class _NodeDisplayState extends State<NodeDisplay> {
                         onDragEnd: (indicatorKey, outPort) {
                           widget.onPortDragEnd(indicatorKey, outPort);
                         },
-                        onDragAccepted: widget.onPortDragAccepted,
                         onKeyReady: (indicatorKey, outPort) {
                           widget.stateManager.registerPortIndicatorKey(
                               widget.node, outPort, indicatorKey);

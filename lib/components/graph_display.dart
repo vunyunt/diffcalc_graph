@@ -6,6 +6,8 @@ import 'package:diffcalc_graph/data/nodes/ui_node.dart';
 import 'package:diffcalc_graph/data/ui_graph.dart';
 import 'package:flutter/material.dart';
 
+/// Diffcalc graph display. [graph] should already be initialized before being
+/// passed to this widget.
 class GraphDisplay extends StatefulWidget {
   final UiGraph graph;
 
@@ -45,6 +47,12 @@ class _GraphDisplayState extends State<GraphDisplay> {
     containerKey = GlobalObjectKey(widget.graph);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       createEdgeDisplays(widget.graph);
+    });
+
+    widget.graph.onEdgeConnected.listen((edge) {
+      setState(() {
+        edgeWidgets[edge] = createEdgeDisplay(widget.graph, edge);
+      });
     });
 
     widget.graph.onEdgeDisconnected.listen((edge) {

@@ -39,7 +39,7 @@ class PortState {
   }
 
   void removeConnectedEdge(EdgeState connectedEdge) {
-    print(_connectedEdges.remove(connectedEdge));
+    _connectedEdges.remove(connectedEdge);
   }
 
   void redrawEdge() {

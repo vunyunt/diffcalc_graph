@@ -11,15 +11,13 @@ class _PortIndicator extends StatefulWidget {
   final void Function() onDragStarted;
   final void Function(DragUpdateDetails dragUpdateDetails) onDragUpdate;
   final void Function() onDragEnd;
-  final void Function(Edge edge) onDragAccepted;
 
   const _PortIndicator(
       {super.key,
       required this.port,
       required this.onDragStarted,
       required this.onDragUpdate,
-      required this.onDragEnd,
-      required this.onDragAccepted});
+      required this.onDragEnd});
 
   @override
   State<StatefulWidget> createState() {
@@ -29,6 +27,14 @@ class _PortIndicator extends StatefulWidget {
 
 class _PortIndicatorState extends State<_PortIndicator> {
   bool hover = false;
+
+  void _toggleEdge(OutPort source, InPort destination) {
+    if (destination.connected && destination.edge!.from == source) {
+      destination.edge!.disconnect();
+    } else {
+      source.connectTo(destination);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +62,9 @@ class _PortIndicatorState extends State<_PortIndicator> {
               onAccept: (acceptingPort) {
                 final currentPort = widget.port;
                 if (currentPort is OutPort && acceptingPort is InPort) {
-                  final edge = currentPort.connectTo(acceptingPort);
-                  widget.onDragAccepted(edge);
+                  _toggleEdge(currentPort, acceptingPort);
                 } else if (currentPort is InPort && acceptingPort is OutPort) {
-                  final edge = acceptingPort.connectTo(currentPort);
-                  widget.onDragAccepted(edge);
+                  _toggleEdge(acceptingPort, currentPort);
                 }
               },
               builder: (context, candidateData, rejectedData) {
@@ -84,7 +88,6 @@ abstract class PortDisplay extends StatefulWidget {
   final void Function(DragUpdateDetails) onDragUpdate;
   final void Function(GlobalObjectKey, Port) onDragEnd;
   final void Function(GlobalObjectKey, Port) onKeyReady;
-  final void Function(Edge edge) onDragAccepted;
 
   Port<dynamic, UiNodeMixin> get port;
 
@@ -93,7 +96,6 @@ abstract class PortDisplay extends StatefulWidget {
       required this.onDragStarted,
       required this.onDragUpdate,
       required this.onDragEnd,
-      required this.onDragAccepted,
       required this.onKeyReady});
 }
 
@@ -120,7 +122,6 @@ final class InPortDisplay extends PortDisplay {
       required super.onDragStarted,
       required super.onDragUpdate,
       required super.onDragEnd,
-      required super.onDragAccepted,
       required super.onKeyReady});
 
   @override
@@ -147,7 +148,6 @@ class _InPortDisplayState extends _PortDisplayState<InPortDisplay> {
               onDragEnd: () {
                 widget.onDragEnd(indicatorKey, widget.inPort);
               },
-              onDragAccepted: widget.onDragAccepted,
             ),
             const SizedBox(width: 8),
             buildName(context, widget.inPort.name)
@@ -168,7 +168,6 @@ final class OutPortDisplay extends PortDisplay {
       required super.onDragStarted,
       required super.onDragUpdate,
       required super.onDragEnd,
-      required super.onDragAccepted,
       required super.onKeyReady});
 
   @override
@@ -197,7 +196,6 @@ final class _OutPortDisplayState extends _PortDisplayState<OutPortDisplay> {
               onDragEnd: () {
                 widget.onDragEnd(indicatorKey, widget.outPort);
               },
-              onDragAccepted: widget.onDragAccepted,
             )
           ],
         ));
