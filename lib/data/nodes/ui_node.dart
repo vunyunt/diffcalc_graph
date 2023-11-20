@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:computational_graph/computational_graph.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 
 /// A node that contains gui attributes
 mixin UiNodeMixin on Node {
@@ -26,5 +26,11 @@ mixin UiNodeMixin on Node {
   void loadAttributesFrom(Map<String, Uint8List> attributes) {
     x = ByteData.view(attributes[keyX]!.buffer).getFloat64(0);
     y = ByteData.view(attributes[keyY]!.buffer).getFloat64(0);
+  }
+
+  /// Override this to build a ui widget for this node. It will be shown below
+  /// the ports.
+  Widget? buildUiWidget(BuildContext context) {
+    return null;
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:boxy/boxy.dart';
 import 'package:computational_graph/computational_graph.dart';
 import 'package:diffcalc_graph/components/port_display.dart';
 import 'package:diffcalc_graph/components/ui_state_manager.dart';
@@ -27,6 +30,39 @@ final class NodeDisplay extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _NodeDisplayState();
+  }
+}
+
+enum _NodeDisplayChildren { title, ports, nodeUi }
+
+class _NodeDisplayLayoutDelegate extends BoxyDelegate {
+  @override
+  Size layout() {
+    final title = getChild(_NodeDisplayChildren.title);
+    final ports = getChild(_NodeDisplayChildren.ports);
+
+    var titleSize =
+        title.render.getDryLayout(BoxConstraints.loose(Size.infinite));
+    var portsSize =
+        ports.render.getDryLayout(BoxConstraints.loose(Size.infinite));
+
+    final width = max(titleSize.width, portsSize.width);
+
+    title.layout(BoxConstraints.loose(Size(width, double.infinity)));
+    ports.layout(BoxConstraints.loose(Size(width, double.infinity)));
+    ports.position(title.rect.bottomLeft + const Offset(0, 16));
+
+    var bottom = ports.rect.bottom;
+
+    if (hasChild(_NodeDisplayChildren.nodeUi)) {
+      final nodeUi = getChild(_NodeDisplayChildren.nodeUi);
+      nodeUi.layout(BoxConstraints.loose(Size(width, double.infinity)));
+      nodeUi.position(ports.rect.bottomLeft + const Offset(0, 16));
+
+      bottom = nodeUi.rect.bottom;
+    }
+
+    return Size(width, bottom);
   }
 }
 
@@ -71,6 +107,7 @@ class _NodeDisplayState extends State<NodeDisplay> {
                       ))
                   .toList(),
             ),
+            const SizedBox(width: 24),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: widget.node.outPorts.values
@@ -131,15 +168,24 @@ class _NodeDisplayState extends State<NodeDisplay> {
     // According to flutter's doc, IntrinsicWidth is relatively expensive and
     // should be avoided if possible. If layout performance ever becomes an
     // issue, this is probably worth looking into.
-    return IntrinsicWidth(
-      child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            buildTitle(context, colorScheme),
-            buildBody(context, colorScheme)
-          ]),
-    );
+    final content = [
+      BoxyId(
+          id: _NodeDisplayChildren.title,
+          child: buildTitle(context, colorScheme)),
+      BoxyId(
+          id: _NodeDisplayChildren.ports,
+          child: buildBody(context, colorScheme))
+    ];
+
+    final nodeUi = widget.node.buildUiWidget(context);
+    if (nodeUi != null) {
+      content.add(BoxyId(id: _NodeDisplayChildren.nodeUi, child: nodeUi));
+    }
+
+    return CustomBoxy(
+        // crossAxisAlignment: CrossAxisAlignment.stretch,
+        delegate: _NodeDisplayLayoutDelegate(),
+        children: content);
   }
 
   @override

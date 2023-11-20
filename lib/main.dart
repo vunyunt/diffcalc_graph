@@ -1,4 +1,5 @@
 import 'package:diffcalc_graph/components/graph_display.dart';
+import 'package:diffcalc_graph/data/nodes/file_input_node.dart';
 import 'package:diffcalc_graph/data/nodes/test_node.dart';
 import 'package:diffcalc_graph/data/ui_graph.dart';
 import 'package:flutter/material.dart';
@@ -64,12 +65,15 @@ class _MyHomePageState extends State<MyHomePage> {
   final UiGraph _graph = UiGraph();
   late final TestNode testNode1;
   late final TestNode testNode2;
+  late final FileInputNode fileInputNode;
 
   _MyHomePageState() {
     testNode1 = TestNode(_graph);
     testNode2 = TestNode(_graph);
     testNode1.outPorts.values.first.connectTo(testNode2.inPorts.values.first);
-    // testNode1.outPorts['outPort3']!.connectTo(testNode2.inPorts['inPort2']!);
+    testNode1.outPorts['outPort3']!.connectTo(testNode2.inPorts['inPort2']!);
+
+    fileInputNode = FileInputNode(_graph);
   }
 
   @override
