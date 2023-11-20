@@ -1,7 +1,7 @@
 import 'package:diffcalc_graph/components/graph_display.dart';
-import 'package:diffcalc_graph/data/nodes/file_input_node.dart';
-import 'package:diffcalc_graph/data/nodes/test_node.dart';
-import 'package:diffcalc_graph/data/ui_graph.dart';
+import 'package:diffcalc_graph/nodes/file_input_node.dart';
+import 'package:diffcalc_graph/nodes/test_node.dart';
+import 'package:diffcalc_graph/ui_graph.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Diffcalc Graph',
       theme: ThemeData(
         // This is the theme of your application.
         //

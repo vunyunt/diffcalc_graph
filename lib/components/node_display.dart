@@ -4,8 +4,8 @@ import 'package:boxy/boxy.dart';
 import 'package:computational_graph/computational_graph.dart';
 import 'package:diffcalc_graph/components/port_display.dart';
 import 'package:diffcalc_graph/components/ui_state_manager.dart';
-import 'package:diffcalc_graph/data/nodes/ui_node.dart';
-import 'package:diffcalc_graph/data/ui_graph.dart';
+import 'package:diffcalc_graph/nodes/ui_node.dart';
+import 'package:diffcalc_graph/ui_graph.dart';
 import 'package:flutter/material.dart';
 
 final class NodeDisplay extends StatefulWidget {
@@ -36,6 +36,10 @@ final class NodeDisplay extends StatefulWidget {
 enum _NodeDisplayChildren { title, ports, nodeUi }
 
 class _NodeDisplayLayoutDelegate extends BoxyDelegate {
+  double minWidth;
+
+  _NodeDisplayLayoutDelegate({required this.minWidth});
+
   @override
   Size layout() {
     final title = getChild(_NodeDisplayChildren.title);
@@ -46,10 +50,16 @@ class _NodeDisplayLayoutDelegate extends BoxyDelegate {
     var portsSize =
         ports.render.getDryLayout(BoxConstraints.loose(Size.infinite));
 
-    final width = max(titleSize.width, portsSize.width);
+    final width = max(max(titleSize.width, portsSize.width), minWidth);
+    final constraints = BoxConstraints(
+      minWidth: width,
+      maxWidth: width,
+      minHeight: 0,
+      maxHeight: double.infinity,
+    );
 
-    title.layout(BoxConstraints.loose(Size(width, double.infinity)));
-    ports.layout(BoxConstraints.loose(Size(width, double.infinity)));
+    title.layout(constraints);
+    ports.layout(constraints);
     ports.position(title.rect.bottomLeft + const Offset(0, 16));
 
     var bottom = ports.rect.bottom;
@@ -184,7 +194,7 @@ class _NodeDisplayState extends State<NodeDisplay> {
 
     return CustomBoxy(
         // crossAxisAlignment: CrossAxisAlignment.stretch,
-        delegate: _NodeDisplayLayoutDelegate(),
+        delegate: _NodeDisplayLayoutDelegate(minWidth: widget.node.minWidth),
         children: content);
   }
 

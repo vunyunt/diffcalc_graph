@@ -1,0 +1,1 @@
+protoc --dart_out=grpc:lib/generated/grpc -Iproto proto/taiko.proto

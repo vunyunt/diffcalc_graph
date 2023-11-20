@@ -17,12 +17,15 @@ class BezierEdgeRenderBox extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    Offset from = this.from + offset;
-    Offset to = this.to + offset;
+    final from = this.from + offset;
+    final to = this.to + offset;
+    final xDistance = to.dx - from.dx;
+    final bezierDistance = xDistance / 2;
 
     Path path = Path();
     path.moveTo(from.dx, from.dy);
-    path.cubicTo(from.dx + 200, from.dy, to.dx - 200, to.dy, to.dx, to.dy);
+    path.cubicTo(from.dx + bezierDistance, from.dy, to.dx - bezierDistance, to.dy,
+        to.dx, to.dy);
     context.canvas.drawPath(path, brush);
   }
 }

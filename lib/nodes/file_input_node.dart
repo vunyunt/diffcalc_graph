@@ -1,22 +1,35 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:computational_graph/computational_graph.dart';
-import 'package:diffcalc_graph/data/nodes/ui_node.dart';
+import 'package:diffcalc_graph/nodes/ui_node.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+/// Reads a file and sends the binary data through the output port. Each
+/// complete file will be sent as a single event of [Uint8List]
 class FileInputNode extends Node with UiNodeMixin {
   String _filePath = '';
+
+  late final OutPort<Uint8List, FileInputNode> output;
 
   FileInputNode(super.graph);
 
   @override
-  Iterable<InPort<dynamic, Node>> createInPorts() => [];
+  Iterable<InPort<dynamic, FileInputNode>> createInPorts() => [];
 
   @override
-  Iterable<OutPort<dynamic, Node>> createOutPorts() =>
-      [OutPort(node: this, name: "output")];
+  Iterable<OutPort<dynamic, FileInputNode>> createOutPorts() {
+    output = OutPort(node: this, name: "output");
+
+    return [output];
+  }
 
   @override
   String get typeName => "FileInputNode";
+
+  @override
+  double get minWidth => 480;
 
   @override
   Widget? buildUiWidget(BuildContext context) {
@@ -24,7 +37,11 @@ class FileInputNode extends Node with UiNodeMixin {
       onPathChanged: (path) {
         _filePath = path;
       },
-      onSendPressed: () {},
+      onSendPressed: () async {
+        final file = File.fromUri(Uri.file(_filePath));
+        final bytes = await file.readAsBytes();
+        sendTo(output, bytes);
+      },
     );
   }
 }
@@ -64,7 +81,7 @@ class _FileInputNodeUiState extends State<_FileInputNodeUi> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -76,7 +93,9 @@ class _FileInputNodeUiState extends State<_FileInputNodeUi> {
               },
               maxLines: 1,
             )),
+            const SizedBox(width: 16),
             ElevatedButton(onPressed: pickFile, child: const Text("Pick file")),
+            const SizedBox(width: 16),
             ElevatedButton(onPressed: () {}, child: const Text("Send"))
           ],
         ));

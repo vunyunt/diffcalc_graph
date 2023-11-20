@@ -2,8 +2,8 @@ import 'package:computational_graph/computational_graph.dart';
 import 'package:diffcalc_graph/components/edge_display.dart';
 import 'package:diffcalc_graph/components/node_display.dart';
 import 'package:diffcalc_graph/components/ui_state_manager.dart';
-import 'package:diffcalc_graph/data/nodes/ui_node.dart';
-import 'package:diffcalc_graph/data/ui_graph.dart';
+import 'package:diffcalc_graph/nodes/ui_node.dart';
+import 'package:diffcalc_graph/ui_graph.dart';
 import 'package:flutter/material.dart';
 
 /// Diffcalc graph display. [graph] should already be initialized before being

@@ -1,5 +1,5 @@
 import 'package:computational_graph/computational_graph.dart';
-import 'package:diffcalc_graph/data/nodes/ui_node.dart';
+import 'package:diffcalc_graph/nodes/ui_node.dart';
 import 'package:flutter/material.dart';
 
 Widget buildName(BuildContext context, String name) {
@@ -27,6 +27,18 @@ class _PortIndicator extends StatefulWidget {
 
 class _PortIndicatorState extends State<_PortIndicator> {
   bool hover = false;
+
+  /// Returns the port pair in (InPort, OutPort) order.
+  /// If the ports aren't a valid in/out pair, returns null
+  (InPort, OutPort)? getPortPair(Port a, Port b) {
+    if (a is InPort && b is OutPort) {
+      return (a, b);
+    } else if (a is OutPort && b is InPort) {
+      return (b, a);
+    } else {
+      return null;
+    }
+  }
 
   void _toggleEdge(OutPort source, InPort destination) {
     if (destination.connected && destination.edge!.from == source) {
@@ -56,16 +68,19 @@ class _PortIndicatorState extends State<_PortIndicator> {
             onDragUpdate: widget.onDragUpdate,
             onDragEnd: (e) => widget.onDragEnd(),
             child: DragTarget<Port<dynamic, Node>>(
-              onWillAccept: (port) =>
-                  (widget.port is InPort && port is OutPort) ||
-                  (widget.port is OutPort && port is InPort),
+              onWillAccept: (port) {
+                return port != null && getPortPair(port, widget.port) != null;
+              },
               onAccept: (acceptingPort) {
-                final currentPort = widget.port;
-                if (currentPort is OutPort && acceptingPort is InPort) {
-                  _toggleEdge(currentPort, acceptingPort);
-                } else if (currentPort is InPort && acceptingPort is OutPort) {
-                  _toggleEdge(acceptingPort, currentPort);
-                }
+                try {
+                  final currentPort = widget.port;
+                  if (currentPort is OutPort && acceptingPort is InPort) {
+                    _toggleEdge(currentPort, acceptingPort);
+                  } else if (currentPort is InPort &&
+                      acceptingPort is OutPort) {
+                    _toggleEdge(acceptingPort, currentPort);
+                  }
+                } catch (e) {}
               },
               builder: (context, candidateData, rejectedData) {
                 return Container(

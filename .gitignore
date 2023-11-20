@@ -44,4 +44,4 @@ app.*.map.json
 /android/app/release
 
 # Generated protobuf files
-/lib/data/nodes/grpc/gen/
+/lib/grpc/gen/

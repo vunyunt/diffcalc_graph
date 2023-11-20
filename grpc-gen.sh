@@ -1,1 +1,1 @@
-protoc --dart_out=grpc:lib/data/nodes/grpc/gen -Ilib/data/nodes/grpc/protos taiko.proto
+protoc --dart_out=grpc:lib/grpc/gen -Ilib/grpc/protos taiko.proto

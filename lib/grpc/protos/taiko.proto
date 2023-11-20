@@ -10,8 +10,8 @@ service Taiko {
 
 enum TaikoHitType {
   unknown = 0;
-  don = 1;
-  katsu = 2;
+  center = 1;
+  rim = 2;
 }
 
 message DecodeParams {

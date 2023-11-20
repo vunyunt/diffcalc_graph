@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option csharp_namespace = "DiffcalcGraph";
+
+package taiko_beatmap;
+
+service Taiko {
+  rpc DecodeBeatmapFile (DecodeParams) returns (TaikoBeatmap);
+}
+
+enum TaikoHitType {
+  unknown = 0;
+  center = 1;
+  rim = 2;
+}
+
+message DecodeParams {
+  string beatmapFilePath = 1;
+}
+
+message TaikoHitObject {
+  uint32 index = 1;
+  uint64 startTime = 2; // Start time in milliseconds
+  TaikoHitType type = 3;
+}
+
+message TaikoBeatmap { repeated TaikoHitObject hitObjects = 1; }

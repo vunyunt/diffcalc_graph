@@ -13,6 +13,9 @@ mixin UiNodeMixin on Node {
   double x = 0.0;
   double y = 0.0;
 
+  /// Override this to set a min width for the node
+  double get minWidth => 0.0;
+
   /// Create attribute map for ui attributes. Classes using this mixin should
   /// call this and combine it with their own attributes.
   Map<String, Uint8List> getUiAttributes() {

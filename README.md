@@ -4,13 +4,9 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Generate protobuf code
 
-A few resources to get you started if this is your first Flutter project:
+_See https://grpc.io/docs/languages/dart/quickstart/ for setting up protobuf for dart_
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Run `./proto/compile.sh` from project root to generate protobuf code.
+Generated code will be placed in `lib/generated/grpc`

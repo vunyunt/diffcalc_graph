@@ -69,8 +69,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "9fa0ff8e7c4ae1412fa8881d3d803e07f0ffd641"
-      resolved-ref: "9fa0ff8e7c4ae1412fa8881d3d803e07f0ffd641"
+      ref: d3c4220b557209931e3533306e25bbb1d6d797c6
+      resolved-ref: d3c4220b557209931e3533306e25bbb1d6d797c6
       url: "https://github.com/vunyunt/computational_graph.git"
     source: git
     version: "1.0.0"
