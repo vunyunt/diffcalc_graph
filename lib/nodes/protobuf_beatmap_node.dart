@@ -28,7 +28,7 @@ class ProtobufBeatmapNode extends Node with UiNodeMixin {
 
             for (var element in beatmap.hitObjects) {
               TaikoDifficultyHitObject current =
-                  TaikoDifficultyHitObject(element, previous);
+                  TaikoDifficultyHitObject(element, previous: previous);
               previous = current;
               sendTo(hitObjectsOutput, current);
             }

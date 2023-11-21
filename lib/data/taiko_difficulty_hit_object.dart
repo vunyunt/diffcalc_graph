@@ -1,12 +1,10 @@
 import 'package:diffcalc_graph/data/timed.dart';
 import 'package:diffcalc_graph/grpc/gen/taiko.pb.dart';
 
-class TaikoDifficultyHitObject with Timed {
+class TaikoDifficultyHitObject extends LinkedTimed<TaikoDifficultyHitObject> {
   final TaikoHitObject hitObject;
 
-  final TaikoDifficultyHitObject? previous;
-
-  TaikoDifficultyHitObject(this.hitObject, this.previous);
+  TaikoDifficultyHitObject(this.hitObject, {super.previous});
 
   @override
   get startTime => hitObject.startTime.toInt();

@@ -1,10 +1,5 @@
-import 'dart:math';
-
 import 'package:diffcalc_graph/data/collection/limited_capacity_queue.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:diffcalc_graph/main.dart';
 
 void main() {
   test('Element insertion & overwriting test', () {
@@ -41,7 +36,8 @@ void main() {
     expect(q.removeFirst(), 4);
     expect(q.removeFirst(), 5);
 
-    // Queue should already be empty here, expect StateError
+    // All elements should be popped and queue should be empty here
+    expect(q.isEmpty, true);
     expect(() => q.removeFirst(), throwsA(const TypeMatcher<StateError>()));
   });
 }

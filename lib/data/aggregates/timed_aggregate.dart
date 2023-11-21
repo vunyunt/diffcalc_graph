@@ -1,14 +1,17 @@
 import 'package:diffcalc_graph/data/timed.dart';
 
-class TimedAggregate<DataType extends Timed> with Timed {
+class LinkedTimedAggregate<DataType extends Timed>
+    extends LinkedTimed<LinkedTimedAggregate<DataType>> {
   final List<DataType> elements = [];
+
+  LinkedTimedAggregate({super.previous});
 
   @override
   int get startTime => elements.first.startTime;
 }
 
-class FlatTimedAggregate<DataType extends Timed>
-    extends TimedAggregate<DataType> {
+class LinkedFlatTimedAggregate<DataType extends Timed>
+    extends LinkedTimedAggregate<DataType> {
   int? get childrenInterval {
     if (elements.length <= 2) {
       return null;
