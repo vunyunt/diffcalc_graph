@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:computational_graph/computational_graph.dart';
 import 'package:diffcalc_graph/data/timed.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
@@ -16,16 +18,16 @@ class FlatTimingAggregator<InputType extends Timed> extends Node
         node: this,
         name: "input",
         onDataStreamAvailable: (events) {
-          int? previousEventTime;
+          Queue<int> previousEventTimes = Queue();
 
           events.forEach((event) {
             int? interval;
 
-            if (previousEventTime != null) {
-              interval = event.startTime - previousEventTime!;
-            }
-
-            previousEventTime = event.startTime;
+            // if (previousEventTime != null) {
+            //   interval = event.startTime - previousEventTime!;
+            // }
+            //
+            // previousEventTime = event.startTime;
           });
         });
 

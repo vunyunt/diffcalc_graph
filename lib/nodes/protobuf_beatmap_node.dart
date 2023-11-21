@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:computational_graph/computational_graph.dart';
+import 'package:diffcalc_graph/data/taiko_difficulty_hit_object.dart';
 import 'package:diffcalc_graph/grpc/gen/taiko.pb.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
 
@@ -10,7 +11,8 @@ import 'package:diffcalc_graph/nodes/ui_node.dart';
 class ProtobufBeatmapNode extends Node with UiNodeMixin {
   late final InPort<Uint8List, ProtobufBeatmapNode> inPort;
 
-  late final OutPort<TaikoHitObject, ProtobufBeatmapNode> hitObjectsOutput;
+  late final OutPort<TaikoDifficultyHitObject, ProtobufBeatmapNode>
+      hitObjectsOutput;
 
   ProtobufBeatmapNode(super.graph, {super.id});
 
@@ -22,8 +24,13 @@ class ProtobufBeatmapNode extends Node with UiNodeMixin {
         onDataStreamAvailable: (beatmapDataStream) {
           beatmapDataStream.forEach((bytes) async {
             final beatmap = TaikoBeatmap.fromBuffer(bytes);
+            TaikoDifficultyHitObject? previous;
+
             for (var element in beatmap.hitObjects) {
-              sendTo(hitObjectsOutput, element);
+              TaikoDifficultyHitObject current =
+                  TaikoDifficultyHitObject(element, previous);
+              previous = current;
+              sendTo(hitObjectsOutput, current);
             }
           });
         });
