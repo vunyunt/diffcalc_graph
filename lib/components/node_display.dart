@@ -80,6 +80,8 @@ class _NodeDisplayState extends State<NodeDisplay> {
   @override
   void initState() {
     super.initState();
+
+    // Register the node ui state on the state manager
     widget.stateManager
         .registerNodeState(nodeState: NodeState(node: widget.node));
   }
@@ -146,7 +148,7 @@ class _NodeDisplayState extends State<NodeDisplay> {
   Widget buildTitle(BuildContext context, ColorScheme colorScheme) {
     return GestureDetector(
       onPanUpdate: (e) {
-        for (final renderBox in widget.node.updateOnDrag) {
+        for (final renderBox in widget.node.uiState.updateOnDrag) {
           renderBox.markNeedsPaint();
         }
 
@@ -202,6 +204,10 @@ class _NodeDisplayState extends State<NodeDisplay> {
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final colorScheme = themeData.colorScheme;
+
+    // Register the [setState] function for [UiNodeMixin]. [setState] called from
+    // [UiNodeMixin]'s subclasses will be forwarded to this widget's [setState]
+    widget.node.uiState.onSetState = setState;
 
     return Positioned(
         left: widget.node.x,

@@ -13,7 +13,7 @@ class FileInputNode extends Node with UiNodeMixin {
 
   late final OutPort<Uint8List, FileInputNode> output;
 
-  FileInputNode(super.graph);
+  FileInputNode(super.graph, {super.id});
 
   @override
   Iterable<InPort<dynamic, FileInputNode>> createInPorts() => [];
@@ -65,6 +65,10 @@ class _FileInputNodeUiState extends State<_FileInputNodeUi> {
   @override
   initState() {
     super.initState();
+
+    _filePathController.addListener(() {
+      widget.onPathChanged(_filePathController.text);
+    });
   }
 
   pickFile() async {
@@ -88,15 +92,16 @@ class _FileInputNodeUiState extends State<_FileInputNodeUi> {
             Expanded(
                 child: TextField(
               controller: _filePathController,
-              onChanged: (value) {
-                widget.onPathChanged(value);
-              },
               maxLines: 1,
             )),
             const SizedBox(width: 16),
             ElevatedButton(onPressed: pickFile, child: const Text("Pick file")),
             const SizedBox(width: 16),
-            ElevatedButton(onPressed: () {}, child: const Text("Send"))
+            ElevatedButton(
+                onPressed: () {
+                  widget.onSendPressed();
+                },
+                child: const Text("Send"))
           ],
         ));
   }

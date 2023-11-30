@@ -3,12 +3,22 @@ import 'dart:typed_data';
 import 'package:computational_graph/computational_graph.dart';
 import 'package:flutter/widgets.dart';
 
+class NodeUiState {
+  /// A set of RenderBox to update when node is dragged.
+  Set<RenderBox> updateOnDrag = {};
+
+  /// For allowing setState from [UiNodeMixin].
+  /// The widget displaying this node should forward this to its own setState
+  Function(Function())? onSetState;
+}
+
 /// A node that contains gui attributes
 mixin UiNodeMixin on Node {
   static const keyX = 'ui_x';
   static const keyY = 'ui_y';
 
-  final Set<RenderBox> updateOnDrag = {};
+  /// UI state for this node. This should only be used by the node display
+  final uiState = NodeUiState();
 
   double x = 0.0;
   double y = 0.0;
@@ -35,5 +45,14 @@ mixin UiNodeMixin on Node {
   /// the ports.
   Widget? buildUiWidget(BuildContext context) {
     return null;
+  }
+
+  @protected
+  setState(Function() action) {
+    if (uiState.onSetState != null) {
+      uiState.onSetState?.call(action);
+    } else {
+      action();
+    }
   }
 }

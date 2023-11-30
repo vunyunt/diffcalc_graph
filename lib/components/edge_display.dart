@@ -20,12 +20,12 @@ class BezierEdgeRenderBox extends RenderBox {
     final from = this.from + offset;
     final to = this.to + offset;
     final xDistance = to.dx - from.dx;
-    final bezierDistance = xDistance / 2;
+    final bezierDistance = xDistance.abs() / 2;
 
     Path path = Path();
     path.moveTo(from.dx, from.dy);
-    path.cubicTo(from.dx + bezierDistance, from.dy, to.dx - bezierDistance, to.dy,
-        to.dx, to.dy);
+    path.cubicTo(from.dx + bezierDistance, from.dy, to.dx - bezierDistance,
+        to.dy, to.dx, to.dy);
     context.canvas.drawPath(path, brush);
   }
 }

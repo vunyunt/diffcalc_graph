@@ -44,7 +44,7 @@ class _PortIndicatorState extends State<_PortIndicator> {
     if (destination.connected && destination.edge!.from == source) {
       destination.edge!.disconnect();
     } else {
-      source.connectTo(destination);
+      Edge.connect(source, destination);
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:computational_graph/computational_graph.dart';
+import 'package:diffcalc_graph/data/indexed.dart';
 import 'package:diffcalc_graph/data/taiko_difficulty_hit_object.dart';
 import 'package:diffcalc_graph/grpc/gen/taiko.pb.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
@@ -11,8 +12,8 @@ import 'package:diffcalc_graph/nodes/ui_node.dart';
 class ProtobufBeatmapNode extends Node with UiNodeMixin {
   late final InPort<Uint8List, ProtobufBeatmapNode> inPort;
 
-  late final OutPort<TaikoDifficultyHitObject, ProtobufBeatmapNode>
-      hitObjectsOutput;
+  late final OutPort<Indexed<int, TaikoDifficultyHitObject>,
+      ProtobufBeatmapNode> indexedHitObjectsOutput;
 
   ProtobufBeatmapNode(super.graph, {super.id});
 
@@ -30,7 +31,9 @@ class ProtobufBeatmapNode extends Node with UiNodeMixin {
               TaikoDifficultyHitObject current =
                   TaikoDifficultyHitObject(element, previous: previous);
               previous = current;
-              sendTo(hitObjectsOutput, current);
+
+              sendTo(indexedHitObjectsOutput,
+                  Indexed(current.hitObject.index, current));
             }
           });
         });
@@ -40,9 +43,9 @@ class ProtobufBeatmapNode extends Node with UiNodeMixin {
 
   @override
   Iterable<OutPort<dynamic, Node>> createOutPorts() {
-    hitObjectsOutput = OutPort(node: this, name: 'Hit Objects Output');
+    indexedHitObjectsOutput = OutPort(node: this, name: 'Indexed HitObjects');
 
-    return [hitObjectsOutput];
+    return [indexedHitObjectsOutput];
   }
 
   @override

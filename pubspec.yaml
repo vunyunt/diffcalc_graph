@@ -33,7 +33,7 @@ dependencies:
   computational_graph:
     git:
       url: https://github.com/vunyunt/computational_graph.git
-      ref: d3c4220b557209931e3533306e25bbb1d6d797c6
+      ref: 9ce501e1d7b077676575bd03ca48e68b9f1464e8
 
 
   # The following adds the Cupertino Icons font to your application.

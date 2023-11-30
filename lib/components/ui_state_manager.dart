@@ -87,6 +87,8 @@ class NodeState {
   }
 }
 
+/// Note: It seems that these states can be just stored in [UiNodeMixin] instead.
+///       Might want to refactor these states in there instead in the future.
 class UiStateManager {
   final Map<String, NodeState> _nodeStates = {};
 
