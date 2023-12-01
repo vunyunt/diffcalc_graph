@@ -150,7 +150,12 @@ class _GraphDisplayState extends State<GraphDisplay> {
       widgets.add(buildDraggingEdge(context));
     }
 
-    return Stack(
-        key: containerKey, children: [...widgets, ...edgeWidgets.values]);
+    return InteractiveViewer(
+        constrained: false,
+        boundaryMargin: EdgeInsets.all(480),
+        minScale: 0.1,
+        maxScale: 2.0,
+        child: Stack(
+            key: containerKey, children: [...widgets, ...edgeWidgets.values]));
   }
 }

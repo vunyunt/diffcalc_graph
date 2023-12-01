@@ -153,8 +153,8 @@ class _NodeDisplayState extends State<NodeDisplay> {
         }
 
         setState(() {
-          widget.node.x += e.delta.dx;
-          widget.node.y += e.delta.dy;
+          widget.node.x = max(0, widget.node.x + e.delta.dx);
+          widget.node.y = max(0, widget.node.y + e.delta.dy);
         });
 
         widget.stateManager.getNodeState(widget.node).redrawConnectedEdges();
@@ -209,18 +209,16 @@ class _NodeDisplayState extends State<NodeDisplay> {
     // [UiNodeMixin]'s subclasses will be forwarded to this widget's [setState]
     widget.node.uiState.onSetState = setState;
 
-    return Positioned(
-        left: widget.node.x,
-        top: widget.node.y,
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: colorScheme.secondaryContainer,
-              boxShadow: [
-                BoxShadow(
-                    color: colorScheme.shadow, blurRadius: 8, spreadRadius: -4)
-              ]),
-          child: buildContent(context, colorScheme),
-        ));
+    return Container(
+      margin: EdgeInsets.only(left: widget.node.x, top: widget.node.y),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: colorScheme.secondaryContainer,
+          boxShadow: [
+            BoxShadow(
+                color: colorScheme.shadow, blurRadius: 8, spreadRadius: -4)
+          ]),
+      child: buildContent(context, colorScheme),
+    );
   }
 }
