@@ -12,7 +12,7 @@ class BezierEdgeRenderBox extends RenderBox {
 
   @override
   void performLayout() {
-    size = constraints.biggest;
+    size = Size((to.dx - from.dx).abs(), (to.dy - from.dy).abs());
   }
 
   @override

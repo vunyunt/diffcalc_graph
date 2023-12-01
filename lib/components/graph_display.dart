@@ -20,7 +20,7 @@ class GraphDisplay extends StatefulWidget {
 }
 
 class _GraphDisplayState extends State<GraphDisplay> {
-  RenderBox? currentDraggingRenderBox;
+  RenderBox? draggingPortRenderBox;
   late GlobalObjectKey containerKey;
   Offset cursorPosition = Offset.zero;
   UiStateManager stateManager = UiStateManager();
@@ -63,12 +63,15 @@ class _GraphDisplayState extends State<GraphDisplay> {
   }
 
   Widget buildDraggingEdge(BuildContext context) {
-    RenderBox containerRenderBox = context.findRenderObject() as RenderBox;
+    RenderBox containerRenderBox =
+        containerKey.currentContext!.findRenderObject() as RenderBox;
+
+    final fromLocalPosition = draggingPortRenderBox!.localToGlobal(Offset(
+        draggingPortRenderBox!.size.width,
+        draggingPortRenderBox!.size.height / 2));
 
     return BezierEdgeDisplay(
-      startPosition: containerRenderBox.globalToLocal(currentDraggingRenderBox!
-          .localToGlobal(Offset(currentDraggingRenderBox!.size.width,
-              currentDraggingRenderBox!.size.height / 2))),
+      startPosition: containerRenderBox.globalToLocal(fromLocalPosition),
       endPosition: cursorPosition,
       paint: draggingPaint,
     );
@@ -83,7 +86,7 @@ class _GraphDisplayState extends State<GraphDisplay> {
         onPortDragStarted: (indicatorKey, port) {
           setState(() {
             currentDraggingPort = port;
-            currentDraggingRenderBox =
+            draggingPortRenderBox =
                 indicatorKey.currentContext!.findRenderObject() as RenderBox;
           });
         },
@@ -98,7 +101,7 @@ class _GraphDisplayState extends State<GraphDisplay> {
         onPortDragEnd: (indicatorKey, port) {
           setState(() {
             currentDraggingPort = null;
-            currentDraggingRenderBox = null;
+            draggingPortRenderBox = null;
           });
         },
         onPortDragAccepted: (edge) {
@@ -146,13 +149,13 @@ class _GraphDisplayState extends State<GraphDisplay> {
 
     widgets.addAll(createNodeDisplays(widget.graph));
 
-    if (currentDraggingRenderBox != null) {
+    if (draggingPortRenderBox != null) {
       widgets.add(buildDraggingEdge(context));
     }
 
     return InteractiveViewer(
         constrained: false,
-        boundaryMargin: EdgeInsets.all(480),
+        boundaryMargin: const EdgeInsets.all(480),
         minScale: 0.1,
         maxScale: 2.0,
         child: Stack(
