@@ -26,19 +26,30 @@ mixin UiNodeMixin on Node {
   /// Override this to set a min width for the node
   double get minWidth => 0.0;
 
-  /// Create attribute map for ui attributes. Classes using this mixin should
-  /// call this and combine it with their own attributes.
-  Map<String, Uint8List> getUiAttributes() {
+  static Map<String, Uint8List> createAttributeFrom({double? x, double? y}) {
     return {
-      keyX: (ByteData(8)..setFloat64(0, x)).buffer.asUint8List(),
-      keyY: (ByteData(8)..setFloat64(0, y)).buffer.asUint8List(),
+      keyX: (ByteData(8)..setFloat64(0, x ?? 0)).buffer.asUint8List(),
+      keyY: (ByteData(8)..setFloat64(0, y ?? 0)).buffer.asUint8List(),
     };
   }
 
+  /// Create attribute map for ui attributes. Classes using this mixin should
+  /// call this and combine it with their own attributes.
+  Map<String, Uint8List> getUiAttributes() {
+    return createAttributeFrom(x: x, y: y);
+  }
+
   /// Load ui attributes from an attribute map. Should be called in factories
-  void loadAttributesFrom(Map<String, Uint8List> attributes) {
-    x = ByteData.view(attributes[keyX]!.buffer).getFloat64(0);
-    y = ByteData.view(attributes[keyY]!.buffer).getFloat64(0);
+  void loadAttributesFrom(Map<String, Uint8List>? attributes) {
+    if (attributes == null) return;
+
+    if (attributes.containsKey(keyX)) {
+      x = ByteData.view(attributes[keyX]!.buffer).getFloat64(0);
+    }
+
+    if (attributes.containsKey(keyY)) {
+      y = ByteData.view(attributes[keyY]!.buffer).getFloat64(0);
+    }
   }
 
   /// Override this to build a ui widget for this node. It will be shown below

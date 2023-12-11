@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:computational_graph/computational_graph.dart';
+import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,18 @@ import 'package:flutter/material.dart';
 /// Reads a file and sends the binary data through the output port. Each
 /// complete file will be sent as a single event of [Uint8List]
 class FileInputNode extends Node with UiNodeMixin {
+  static const qualifiedName = "FileInputNode";
+
+  @override
+  String get typeName => qualifiedName;
+
+  static void registerFactoryTo(NodeDirectory directory) {
+    directory.registerFactoryFor(
+        qualifiedName,
+        (graph, {attributes, id}) =>
+            FileInputNode(graph, id: id)..loadAttributesFrom(attributes));
+  }
+
   String _filePath = '';
 
   late final OutPort<Uint8List, FileInputNode> output;
@@ -24,9 +37,6 @@ class FileInputNode extends Node with UiNodeMixin {
 
     return [output];
   }
-
-  @override
-  String get typeName => "FileInputNode";
 
   @override
   double get minWidth => 480;

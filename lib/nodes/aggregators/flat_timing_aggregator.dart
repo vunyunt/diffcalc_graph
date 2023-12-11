@@ -4,10 +4,22 @@ import 'package:diffcalc_graph/data/aggregates/timed_aggregate.dart';
 import 'package:diffcalc_graph/data/indexed.dart';
 import 'package:diffcalc_graph/data/taiko_difficulty_hit_object.dart';
 import 'package:diffcalc_graph/data/timed.dart';
+import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FlatTimingAggregator extends Node with UiNodeMixin {
+  static const qualifiedName = "Aggregators.FlatTimingAggregator";
+
+  @override
+  String get typeName => qualifiedName;
+
+  static void registerFactoryTo(NodeDirectory directory) {
+    directory.registerFactoryFor(qualifiedName,
+        (graph, {attributes, id}) => FlatTimingAggregator(graph, id: id)..loadAttributesFrom(
+            attributes));
+  }
+
   int marginOfError = 2;
 
   late final InPort<Indexed<int, Timed>, FlatTimingAggregator> input;
@@ -129,7 +141,4 @@ class FlatTimingAggregator extends Node with UiNodeMixin {
 
     return [output];
   }
-
-  @override
-  String get typeName => "FlatTimingAggregator";
 }

@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:computational_graph/computational_graph.dart';
 import 'package:diffcalc_graph/components/edge_display.dart';
 import 'package:diffcalc_graph/components/node_display.dart';
+import 'package:diffcalc_graph/components/node_selector/node_selector.dart';
 import 'package:diffcalc_graph/components/ui_state_manager.dart';
+import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
 import 'package:diffcalc_graph/ui_graph.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +15,11 @@ import 'package:flutter/material.dart';
 class GraphDisplay extends StatefulWidget {
   final UiGraph graph;
 
-  const GraphDisplay({Key? key, required this.graph}) : super(key: key);
+  final NodeDirectory nodeDirectory;
+
+  const GraphDisplay(
+      {Key? key, required this.graph, required this.nodeDirectory})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -22,9 +30,11 @@ class GraphDisplay extends StatefulWidget {
 class _GraphDisplayState extends State<GraphDisplay> {
   RenderBox? draggingPortRenderBox;
   late GlobalObjectKey containerKey;
+  late GlobalObjectKey interactiveViewerKey;
   Offset cursorPosition = Offset.zero;
   UiStateManager stateManager = UiStateManager();
   Port? currentDraggingPort;
+  TransformationController? transformationController;
 
   Map<Edge, Widget> edgeWidgets = {};
 
@@ -44,7 +54,10 @@ class _GraphDisplayState extends State<GraphDisplay> {
   void initState() {
     super.initState();
 
+    transformationController = TransformationController();
+
     containerKey = GlobalObjectKey(widget.graph);
+    interactiveViewerKey = const GlobalObjectKey("InteractiveViewer");
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       createEdgeDisplays(widget.graph);
     });
@@ -153,12 +166,40 @@ class _GraphDisplayState extends State<GraphDisplay> {
       widgets.add(buildDraggingEdge(context));
     }
 
-    return InteractiveViewer(
-        constrained: false,
-        boundaryMargin: const EdgeInsets.all(480),
-        minScale: 0.1,
-        maxScale: 2.0,
-        child: Stack(
-            key: containerKey, children: [...widgets, ...edgeWidgets.values]));
+    return DragTarget<String>(
+        onWillAccept: (data) {
+          return data is String &&
+              data.startsWith(NodeSelector.nodeFactoryPrefix);
+        },
+        onAcceptWithDetails: (details) {
+          final data = details.data;
+          final nodeFactory = widget.nodeDirectory.getFactoryFor(
+              data.substring(NodeSelector.nodeFactoryPrefix.length));
+
+          if (nodeFactory != null) {
+            final interactiveViewerRenderBox =
+                interactiveViewerKey.currentContext!.findRenderObject()
+                    as RenderBox;
+            final transformedPoint = transformationController!.toScene(
+                interactiveViewerRenderBox.globalToLocal(details.offset));
+
+            setState(() {
+              nodeFactory(widget.graph,
+                  attributes: UiNodeMixin.createAttributeFrom(
+                      x: max(transformedPoint.dx, 0),
+                      y: max(transformedPoint.dy, 0)));
+            });
+          }
+        },
+        builder: (_, __, ___) => InteractiveViewer(
+            key: interactiveViewerKey,
+            transformationController: transformationController,
+            constrained: false,
+            boundaryMargin: const EdgeInsets.all(480),
+            minScale: 0.1,
+            maxScale: 2.0,
+            child: Stack(
+                key: containerKey,
+                children: [...widgets, ...edgeWidgets.values])));
   }
 }

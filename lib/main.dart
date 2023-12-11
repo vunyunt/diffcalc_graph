@@ -1,15 +1,17 @@
-import 'package:computational_graph/src/graph/graph.dart';
 import 'package:diffcalc_graph/components/graph_display.dart';
+import 'package:diffcalc_graph/components/node_selector/node_selector.dart';
 import 'package:diffcalc_graph/data/aggregates/hit_object_aggregate.dart';
 import 'package:diffcalc_graph/data/aggregates/timed_aggregate.dart';
 import 'package:diffcalc_graph/data/indexed.dart';
 import 'package:diffcalc_graph/data/taiko_difficulty_hit_object.dart';
 import 'package:diffcalc_graph/data/timed.dart';
 import 'package:diffcalc_graph/nodes/aggregators/flat_timing_aggregator.dart';
+import 'package:diffcalc_graph/nodes/create_node_directory.dart';
 import 'package:diffcalc_graph/nodes/file_input_node.dart';
+import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:diffcalc_graph/nodes/protobuf_beatmap_node.dart';
 import 'package:diffcalc_graph/nodes/test_node.dart';
-import 'package:diffcalc_graph/nodes/visualization/hit_object_aggregate_visualizer.dart';
+import 'package:diffcalc_graph/nodes/visualizers//hit_object_aggregate_visualizer.dart';
 import 'package:diffcalc_graph/ui_graph.dart';
 import 'package:flutter/material.dart';
 
@@ -72,34 +74,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final UiGraph _graph = UiGraph();
-  late final FileInputNode fileInputNode;
-  late final ProtobufBeatmapNode protobufBeatmapNode;
-  late final FlatTimingAggregator hitObjectRhythmAggregator;
-  late final HitObjectAggregateVisualizer hitObjectRhythmVisualizer;
-  late final FlatTimingAggregator compositeRhythmAggregator;
-  late final HitObjectAggregateVisualizer compositeVisualizer;
+
+  late final NodeDirectory nodeDirectory;
 
   _MyHomePageState() {
-    fileInputNode = FileInputNode(_graph, id: "Beatmap File Input");
-    protobufBeatmapNode =
-        ProtobufBeatmapNode(_graph, id: "Protobuf Beatmap Decoder");
-    hitObjectRhythmAggregator =
-        FlatTimingAggregator(_graph, id: "First pass rhythm");
-    hitObjectRhythmVisualizer = HitObjectAggregateVisualizer(_graph,
-        id: "First pass rhythm visualizer");
-    compositeRhythmAggregator =
-        FlatTimingAggregator(_graph, id: "Second pass rhythm");
-    compositeVisualizer = HitObjectAggregateVisualizer(_graph,
-        id: "Second pass rhythm visualizer");
-
-    // Edge.connect(fileInputNode.output, protobufBeatmapNode.inPort);
-    // Edge.connect(protobufBeatmapNode.indexedHitObjectsOutput,
-    //     hitObjectRhythmAggregator.input);
-    // Edge.connect(
-    //     hitObjectRhythmAggregator.output, hitObjectRhythmVisualizer.input);
-    // Edge.connect(
-    //     hitObjectRhythmAggregator.output, compositeRhythmAggregator.input);
-    // Edge.connect(compositeRhythmAggregator.output, compositeVisualizer.input);
+    nodeDirectory = createNodeDirectory();
   }
 
   @override
@@ -111,19 +90,14 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
+      body: Row(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: GraphDisplay(graph: _graph),
+        children: [
+          NodeSelector(directory: nodeDirectory),
+          Expanded(
+              child: GraphDisplay(graph: _graph, nodeDirectory: nodeDirectory))
+        ],
       ),
     );
   }

@@ -2,11 +2,24 @@ import 'package:computational_graph/computational_graph.dart';
 import 'package:diffcalc_graph/data/aggregates/hit_object_aggregate.dart';
 import 'package:diffcalc_graph/data/indexed.dart';
 import 'package:diffcalc_graph/grpc/gen/taiko.pb.dart';
+import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HitObjectAggregateVisualizer extends Node with UiNodeMixin {
+  static const qualifiedName = "Visualizers.HitObjectAggregateVisualizer";
+
+  @override
+  String get typeName => qualifiedName;
+
+  static void registerFactoryTo(NodeDirectory directory) {
+    directory.registerFactoryFor(
+        qualifiedName,
+        (graph, {attributes, id}) => HitObjectAggregateVisualizer(graph, id: id)
+          ..loadAttributesFrom(attributes));
+  }
+
   late final InPort<Indexed<int, HitObjectAggregate>,
       HitObjectAggregateVisualizer> input;
 
@@ -50,9 +63,6 @@ class HitObjectAggregateVisualizer extends Node with UiNodeMixin {
 
     return [forward];
   }
-
-  @override
-  String get typeName => "HitObjectAggregateVisualizer";
 
   @override
   Widget? buildUiWidget(BuildContext context) {

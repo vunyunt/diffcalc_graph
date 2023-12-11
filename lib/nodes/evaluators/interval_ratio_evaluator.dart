@@ -2,11 +2,24 @@ import 'dart:math';
 
 import 'package:computational_graph/computational_graph.dart';
 import 'package:diffcalc_graph/data/indexed.dart';
+import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
 
 import '../../data/timed.dart';
 
 class IntervalRatioEvaluator extends Node with UiNodeMixin {
+  static const qualifiedName = "Evaluators.IntervalRatioEvaluator";
+
+  @override
+  String get typeName => qualifiedName;
+
+  static void registerFactoryTo(NodeDirectory directory) {
+    directory.registerFactoryFor(
+        qualifiedName,
+        (graph, {attributes, id}) => IntervalRatioEvaluator(graph, id: id)
+          ..loadAttributesFrom(attributes));
+  }
+
   late final InPort<Indexed<int, Timed>, IntervalRatioEvaluator> indexedInput;
 
   late final OutPort<Indexed<int, double>, IntervalRatioEvaluator>
@@ -82,7 +95,4 @@ class IntervalRatioEvaluator extends Node with UiNodeMixin {
 
     return [indexedOutput];
   }
-
-  @override
-  String get typeName => "IntervalRatioEvaluator";
 }
