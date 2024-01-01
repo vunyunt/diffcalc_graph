@@ -15,9 +15,10 @@ class FlatTimingAggregator extends Node with UiNodeMixin {
   String get typeName => qualifiedName;
 
   static void registerFactoryTo(NodeDirectory directory) {
-    directory.registerFactoryFor(qualifiedName,
-        (graph, {attributes, id}) => FlatTimingAggregator(graph, id: id)..loadAttributesFrom(
-            attributes));
+    directory.registerFactoryFor(
+        qualifiedName,
+        (graph, {attributes, id}) => FlatTimingAggregator(graph, id: id)
+          ..loadAttributesFrom(attributes));
   }
 
   int marginOfError = 2;
@@ -134,10 +135,7 @@ class FlatTimingAggregator extends Node with UiNodeMixin {
 
   @override
   Iterable<OutPort<dynamic, Node>> createOutPorts() {
-    output = OutPort(
-      node: this,
-      name: "output",
-    );
+    output = OutPort(node: this, name: "output");
 
     return [output];
   }

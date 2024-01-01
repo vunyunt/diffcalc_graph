@@ -56,10 +56,7 @@ class HitObjectAggregateVisualizer extends Node with UiNodeMixin {
 
   @override
   Iterable<OutPort<dynamic, Node>> createOutPorts() {
-    forward = OutPort(
-      node: this,
-      name: 'Forward',
-    );
+    forward = OutPort(node: this, name: 'Forward');
 
     return [forward];
   }
