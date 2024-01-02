@@ -33,7 +33,7 @@ dependencies:
   computational_graph:
     git:
       url: https://github.com/vunyunt/computational_graph.git
-      ref: 6bc48315a6a2b4d5a01bfd9ea5dbb6397af85e55
+      ref: d508aa5657432f1f274d8233b67d9ae781f9ea30
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -43,6 +43,7 @@ dependencies:
   boxy: ^2.1.3
   file_picker: ^6.1.1
   rxdart: ^0.27.7
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:

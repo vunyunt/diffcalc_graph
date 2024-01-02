@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:computational_graph/computational_graph.dart';
-import 'package:diffcalc_graph/components/edge_display.dart';
+import 'package:diffcalc_graph/components/graph/edge_display.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
 import 'package:flutter/cupertino.dart';
 

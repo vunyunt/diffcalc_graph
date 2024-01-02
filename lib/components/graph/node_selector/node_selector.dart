@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:flutter/material.dart';
 

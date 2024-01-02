@@ -1,17 +1,7 @@
-import 'package:diffcalc_graph/components/graph_display.dart';
-import 'package:diffcalc_graph/components/node_selector/node_selector.dart';
-import 'package:diffcalc_graph/data/aggregates/hit_object_aggregate.dart';
-import 'package:diffcalc_graph/data/aggregates/timed_aggregate.dart';
-import 'package:diffcalc_graph/data/indexed.dart';
-import 'package:diffcalc_graph/data/taiko_difficulty_hit_object.dart';
-import 'package:diffcalc_graph/data/timed.dart';
-import 'package:diffcalc_graph/nodes/aggregators/flat_timing_aggregator.dart';
+import 'package:diffcalc_graph/components/graph/graph_display.dart';
+import 'package:diffcalc_graph/components/graph/node_selector/node_selector.dart';
 import 'package:diffcalc_graph/nodes/create_node_directory.dart';
-import 'package:diffcalc_graph/nodes/file_input_node.dart';
 import 'package:diffcalc_graph/nodes/node_directory.dart';
-import 'package:diffcalc_graph/nodes/protobuf_beatmap_node.dart';
-import 'package:diffcalc_graph/nodes/test_node.dart';
-import 'package:diffcalc_graph/nodes/visualizers//hit_object_aggregate_visualizer.dart';
 import 'package:diffcalc_graph/ui_graph.dart';
 import 'package:flutter/material.dart';
 
@@ -49,24 +39,13 @@ class MyApp extends StatelessWidget {
             secondaryContainer: Colors.grey[900]),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();

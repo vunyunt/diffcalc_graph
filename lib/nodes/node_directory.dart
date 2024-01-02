@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:computational_graph/computational_graph.dart';
-import 'package:flutter/foundation.dart';
 
 /// Data structure to organize nodes into categories, and arbitrary levels of
 /// subcategories. Note that everything should be indexed by qualified name.

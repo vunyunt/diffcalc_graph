@@ -69,8 +69,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "6bc48315a6a2b4d5a01bfd9ea5dbb6397af85e55"
-      resolved-ref: "6bc48315a6a2b4d5a01bfd9ea5dbb6397af85e55"
+      ref: d508aa5657432f1f274d8233b67d9ae781f9ea30
+      resolved-ref: d508aa5657432f1f274d8233b67d9ae781f9ea30
       url: "https://github.com/vunyunt/computational_graph.git"
     source: git
     version: "1.0.0"
@@ -241,6 +241,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -273,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      sha256: "9a96a0a19b594dbc5bf0f1f27d2bc67d5f95957359b461cd9feb44ed6ae75096"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.1"
   rxdart:
     dependency: "direct main"
     description:

@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:computational_graph/computational_graph.dart';
-import 'package:diffcalc_graph/components/edge_display.dart';
-import 'package:diffcalc_graph/components/node_display.dart';
-import 'package:diffcalc_graph/components/node_selector/node_selector.dart';
-import 'package:diffcalc_graph/components/ui_state_manager.dart';
+import 'package:diffcalc_graph/components/graph/edge_display.dart';
+import 'package:diffcalc_graph/components/graph/node_display.dart';
+import 'package:diffcalc_graph/components/graph/node_selector/node_selector.dart';
+import 'package:diffcalc_graph/components/graph/ui_state_manager.dart';
 import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:diffcalc_graph/nodes/ui_node.dart';
 import 'package:diffcalc_graph/ui_graph.dart';

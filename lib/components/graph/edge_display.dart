@@ -1,5 +1,5 @@
 import 'package:computational_graph/computational_graph.dart';
-import 'package:diffcalc_graph/components/ui_state_manager.dart';
+import 'package:diffcalc_graph/components/graph/ui_state_manager.dart';
 import 'package:flutter/material.dart';
 
 class BezierEdgeRenderBox extends RenderBox {
