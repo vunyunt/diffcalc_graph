@@ -1,3 +1,5 @@
+import 'package:diffcalc_graph/nodes/create_node_directory.dart';
+import 'package:diffcalc_graph/nodes/node_directory.dart';
 import 'package:diffcalc_graph/ui_graph.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +8,8 @@ import 'package:flutter/material.dart';
 /// Properties should only be changed inside a [setState] call to ensure that
 /// the UI is updated
 class AppState extends ChangeNotifier {
+  NodeDirectory nodeDirectory = createNodeDirectory();
+
   UiGraph? workingGraph;
 
   /// Should be used similarly to [setState]

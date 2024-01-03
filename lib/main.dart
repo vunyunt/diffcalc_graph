@@ -1,7 +1,5 @@
 import 'package:diffcalc_graph/app_state.dart';
 import 'package:diffcalc_graph/components/graph/graph_editor.dart';
-import 'package:diffcalc_graph/components/graph/main_editing_area.dart';
-import 'package:diffcalc_graph/components/graph/node_selector/node_selector.dart';
 import 'package:diffcalc_graph/components/pages/graph_selection_page.dart';
 import 'package:diffcalc_graph/nodes/create_node_directory.dart';
 import 'package:diffcalc_graph/nodes/node_directory.dart';
@@ -36,7 +34,7 @@ class _DiffcalcGraphAppState extends State<DiffcalcGraphApp> {
               secondaryContainer: Colors.grey[900]),
           useMaterial3: true,
         ),
-        home: const MyHomePage(),
+        home: const GraphSelectionPage(),
       ),
     );
   }
