@@ -12,22 +12,22 @@ import 'package:flutter/material.dart';
 
 /// Diffcalc graph display. [graph] should already be initialized before being
 /// passed to this widget.
-class GraphDisplay extends StatefulWidget {
+class MainEditingArea extends StatefulWidget {
   final UiGraph graph;
 
   final NodeDirectory nodeDirectory;
 
-  const GraphDisplay(
+  const MainEditingArea(
       {Key? key, required this.graph, required this.nodeDirectory})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _GraphDisplayState();
+    return _MainEditingAreaState();
   }
 }
 
-class _GraphDisplayState extends State<GraphDisplay> {
+class _MainEditingAreaState extends State<MainEditingArea> {
   RenderBox? draggingPortRenderBox;
   late GlobalObjectKey containerKey;
   late GlobalObjectKey interactiveViewerKey;

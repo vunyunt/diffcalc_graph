@@ -11,12 +11,21 @@ class GraphSelectionPage extends StatelessWidget {
     final appState = context.read<AppState>();
 
     return Center(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text("No graph selected"),
-        TextButton(
-            onPressed: () => appState.setState(() { appState.workingGraph = UiGraph(); }),
-            child: const Text("New Graph"))
-      ]),
+      child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const TextButton(
+              onPressed: null,
+              child: Text("No graph loaded"),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+                onPressed: () => appState.setState(() {
+                      appState.workingGraph = UiGraph();
+                    }),
+                child: const Text("New Graph"))
+          ]),
     );
   }
 }
