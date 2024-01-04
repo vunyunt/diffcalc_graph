@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:computational_graph/computational_graph.dart';
+import 'package:protobuf/protobuf.dart';
 
 /// Data structure to organize nodes into categories, and arbitrary levels of
 /// subcategories. Note that everything should be indexed by qualified name.
@@ -34,7 +35,7 @@ class CategoryContent {
 }
 
 /// A directory of [UiNode]s to list in the gui
-class NodeDirectory extends NodeFactoryRegistry {
+class NodeDirectory extends NodeFactoryRegistry<GeneratedMessage> {
   final CategoryContent rootCategory =
       CategoryContent(qualifiedName: '', level: 0);
 

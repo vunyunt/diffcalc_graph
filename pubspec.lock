@@ -69,8 +69,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: d508aa5657432f1f274d8233b67d9ae781f9ea30
-      resolved-ref: d508aa5657432f1f274d8233b67d9ae781f9ea30
+      ref: bcbd26e5389dea6c98016c08569aa2d941cc7589
+      resolved-ref: bcbd26e5389dea6c98016c08569aa2d941cc7589
       url: "https://github.com/vunyunt/computational_graph.git"
     source: git
     version: "1.0.0"
@@ -274,7 +274,7 @@ packages:
     source: hosted
     version: "3.7.3"
   protobuf:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: protobuf
       sha256: "68645b24e0716782e58948f8467fd42a880f255096a821f9e7d0ec625b00c84d"
