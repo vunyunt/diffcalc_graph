@@ -39,6 +39,11 @@ mixin UiNodeMixin on Node {
     return createAttributeFrom(x: x, y: y);
   }
 
+  @override
+  Map<String, Uint8List> getAttributes() {
+    return getUiAttributes();
+  }
+
   /// Load ui attributes from an attribute map. Should be called in factories
   void loadAttributesFrom(Map<String, Uint8List>? attributes) {
     if (attributes == null) return;
